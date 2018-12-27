@@ -1,0 +1,22 @@
+sudo: required
+
+services:
+- docker
+
+script:
+    - export REPO_ITSRANDOM=richardcase/itsrandom
+    - export VERSION=`cat ./VERSION`
+    - export BUILDDATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
+    - echo $VERSION
+    - echo $BUILDDATE
+    - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+    - docker build -f  Dockerfile -t $REPO_ITSRANDOM:$COMMIT --build-arg BUILD_DATE=$BUILDDATE --build-arg VCS_REF=$COMMIT --build-arg VERSION=$VERSION .
+    - docker tag $REPO_ITSRANDOM:$COMMIT $REPO_ITSRANDOM:$TAG
+    - docker tag $REPO_ITSRANDOM:$COMMIT $REPO_ITSRANDOM:travis-$TRAVIS_BUILD_NUMBER
+    - docker tag $REPO_ITSRANDOM:$COMMIT $REPO_ITSRANDOM:$VERSION
+    - docker push $REPO_ITSRANDOM
+
+env:
+    global:
+      - COMMIT=${TRAVIS_COMMIT::8}
