@@ -59,7 +59,7 @@ func main() {
 }
 
 func RandomHandler(w http.ResponseWriter, r *http.Request) {
-	data := gofakeit.Paragraph(1, 3, 10, " ")
+	data := gofakeit.Paragraph(2, 3, 10, " ")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(data))
 
